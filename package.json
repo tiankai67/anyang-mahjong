@@ -1,0 +1,24 @@
+{
+  "name": "anyang-mahjong",
+  "version": "1.0.0",
+  "description": "河南安阳地方麻将（互报互飞）网页版：Node+Socket.io 联机，或纯静态单机对战 AI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test.js && node test-engine.js 100 && node test-solo.js",
+    "test:invariants": "node test-invariants.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.8.3"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mahjong",
+    "麻将",
+    "安阳麻将",
+    "socket.io",
+    "game"
+  ]
+}
