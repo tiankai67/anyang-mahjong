@@ -213,6 +213,191 @@ body {
   color: #fff;
 }
 
+.audio-toggles {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.btn-icon {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.btn-icon:hover {
+  background: rgba(0,0,0,0.65);
+}
+
+/* 背景音乐曲库切换 */
+.bgm-picker {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.bgm-name {
+  color: #fff;
+  font-size: 12px;
+  max-width: 60px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  padding: 0 2px;
+  user-select: none;
+}
+
+/* 掷骰子定庄动画覆盖层 */
+.dice-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.dice-overlay.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+/* 重连/再进补展示模式：不阻塞对局，背景更淡 */
+.dice-overlay.show.info {
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.32);
+}
+.dice-panel {
+  background: linear-gradient(145deg, #2b2b3c, #1c1c28);
+  border: 1px solid rgba(255, 215, 0, 0.45);
+  border-radius: 14px;
+  padding: 22px 30px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+.dice-overlay.show .dice-panel {
+  transform: scale(1);
+}
+.dice-title {
+  color: #ffd700;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+.dice-players {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.dice-player {
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 10px 14px;
+  min-width: 84px;
+  transition: all 0.3s ease;
+}
+.dice-player.is-dealer {
+  border-color: #ffd700;
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.5);
+  background: rgba(255, 215, 0, 0.12);
+}
+.dp-name {
+  color: #eee;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+.dp-dice {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 6px 0;
+}
+/* 实物骰子：象牙白立方体 + 黑点 */
+.die {
+  width: 48px;
+  height: 48px;
+  box-sizing: border-box;
+  padding: 7px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  background: linear-gradient(145deg, #ffffff 0%, #f0f0f4 55%, #d9d9e0 100%);
+  border-radius: 11px;
+  box-shadow:
+    inset 0 3px 4px rgba(255, 255, 255, 0.9),
+    inset 0 -4px 6px rgba(0, 0, 0, 0.18),
+    0 4px 9px rgba(0, 0, 0, 0.4);
+}
+.die .pip {
+  width: 8px;
+  height: 8px;
+  align-self: center;
+  justify-self: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #4a4a4a, #0c0c0c 75%);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25), 0 1px 1px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+}
+.die .pip.on { opacity: 1; }
+.die.rolling { animation: diceShake 0.16s linear infinite; }
+@keyframes diceShake {
+  0%   { transform: translateY(0) rotate(0deg); }
+  25%  { transform: translateY(-4px) rotate(-9deg); }
+  50%  { transform: translateY(0) rotate(0deg); }
+  75%  { transform: translateY(-4px) rotate(9deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+.dp-total {
+  color: #bbb;
+  font-size: 12px;
+  margin-top: 6px;
+}
+.dice-result {
+  margin-top: 16px;
+  color: #ffd700;
+  font-size: 16px;
+  font-weight: bold;
+  min-height: 20px;
+}
+.btn-dice-roll {
+  margin-top: 20px;
+  padding: 11px 30px;
+  font-size: 17px;
+  font-weight: bold;
+  color: #1c1c28;
+  background: linear-gradient(145deg, #ffe789, #ffd700);
+  border: none;
+  border-radius: 11px;
+  cursor: pointer;
+  box-shadow: 0 5px 14px rgba(255, 215, 0, 0.45);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.btn-dice-roll:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(255, 215, 0, 0.55);
+}
+.btn-dice-roll:active { transform: translateY(1px); }
+.btn-dice-roll.hidden { display: none; }
+
 /* 麻将桌 */
 /* 设计基准尺寸：桌面按此比例绘制，再由 JS 计算 scale 适配屏幕 */
 .mahjong-table {
@@ -258,19 +443,44 @@ body {
 }
 
 /* 桌面中央弃牌区：所有玩家打出的牌按出牌顺序展示在这里。
-   尺寸收紧并严格居中，确保不与四周紧贴边缘的碰杠区重叠 */
+   固定 8 列网格，一行正好放下 8 张牌，溢出后再换行；不挤压四周碰杠区 */
 .center-discard {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(8, 27px);
   justify-content: center;
   align-content: flex-start;
-  gap: 3px;
-  width: 230px;
-  max-height: 150px;
+  gap: 2px;
+  width: 262px;
+  max-height: 168px;
   overflow-y: auto;
+  overflow-x: hidden;          /* 不要底部（横向）滚动条 */
+  scrollbar-gutter: stable;      /* 预留滚动条位置，避免布局抖动/触发横向条 */
+  scrollbar-width: thin;         /* Firefox 细滚动条 */
+  scrollbar-color: rgba(255,255,255,0.35) transparent;
   padding: 6px;
   background: rgba(0,0,0,0.18);
   border-radius: 8px;
+}
+
+/* 弃牌区内牌固定为 27px，确保 8 列+间距+滚动条不溢出横向 */
+.center-discard .tile {
+  width: 27px;
+  height: 37px;
+}
+
+/* 细而好看的滚动条（WebKit / Electron） */
+.center-discard::-webkit-scrollbar {
+  width: 6px;
+}
+.center-discard::-webkit-scrollbar-track {
+  background: transparent;
+}
+.center-discard::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.28);
+  border-radius: 3px;
+}
+.center-discard::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.45);
 }
 
 .center-discard .cd-tile {
@@ -321,12 +531,12 @@ body {
   margin: 2px 0;
 }
 
-/* 上家（对家）：贴顶，碰杠区在信息条上方、朝外，不向中央延伸 */
+/* 上家（对家）：贴顶，名字在最上方、牌在名字下方（column 正向排列） */
 .player-top {
   top: 6px;
   left: 50%;
   transform: translateX(-50%);
-  flex-direction: column-reverse;
+  flex-direction: column;
 }
 
 /* 左家：贴左边，纵向排列，碰杠区向下堆叠（贴边，不进入中央） */
@@ -527,6 +737,33 @@ body {
   max-width: 100%;
 }
 
+/* 闲家手牌背面：一排扣着的牌 */
+.opp-hand {
+  display: flex;
+  gap: 1px;
+  margin: 2px 0;
+}
+.player-top .opp-hand {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 340px;
+}
+.player-left .opp-hand,
+.player-right .opp-hand {
+  flex-direction: column;
+  align-items: center;
+}
+/* 左/右家竖排并叠放，模拟真实手牌侧面 */
+.player-left .opp-hand .tile,
+.player-right .opp-hand .tile {
+  margin-top: -28px;
+}
+.player-left .opp-hand .tile:first-child,
+.player-right .opp-hand .tile:first-child {
+  margin-top: 0;
+}
+
 .hand-tile {
   cursor: pointer;
   width: 48px;
@@ -657,6 +894,10 @@ body {
 }
 
 .modal-overlay.active { display: flex; }
+
+/* 结算框遮罩很浅：一局结束亮牌后，四面铺开的各家手牌清晰可见，
+   居中结算卡本身用实色底色保证文字可读，互不遮挡 */
+#resultModal.modal-overlay { background: rgba(0, 0, 0, 0.12); }
 
 .modal {
   background: #1a3a24;
@@ -871,4 +1112,69 @@ body {
 @media (max-width: 480px) {
   .hand-tile { width: 38px; height: 52px; }
   .hand-tile.last-draw { margin-left: 10px; }
+}
+
+/* ============ 发牌动画（掷骰定庄之后） ============ */
+/* body.dealing 期间，手牌与闲家背面牌从牌堆“飞入”并带轻微交错，表现快速发牌 */
+@keyframes dealIn {
+  from { opacity: 0; transform: translateY(26px) scale(0.82); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+body.dealing .hand-tile {
+  animation: dealIn 0.34s cubic-bezier(.2,.8,.3,1) both;
+  animation-delay: calc(var(--i, 0) * 0.02s);
+}
+body.dealing .tile-back-img {
+  animation: dealIn 0.34s cubic-bezier(.2,.8,.3,1) both;
+  animation-delay: calc(var(--i, 0) * 0.02s);
+}
+
+/* ============ 一局结束“亮牌” ============ */
+/* 胡牌的那张：金色描边 + 呼吸光晕，让玩家一眼看到和牌张 */
+.win-tile {
+  outline: 2px solid #ffca28;
+  outline-offset: -2px;
+  box-shadow: 0 0 10px 2px rgba(255, 202, 40, 0.7);
+  border-radius: 4px;
+  animation: winGlow 1.1s ease-in-out infinite;
+}
+@keyframes winGlow {
+  0%, 100% { box-shadow: 0 0 8px 1px rgba(255, 202, 40, 0.55); }
+  50%      { box-shadow: 0 0 16px 4px rgba(255, 202, 40, 0.95); }
+}
+/* 财神（花牌）分组：与碰杠之间留点空隙并标注底色 */
+.meld-group.hua-group {
+  margin-left: 6px;
+  padding-left: 6px;
+  border-left: 2px dashed rgba(255, 179, 0, 0.45);
+}
+
+/* ============ 一局结束非阻塞结算条 ============ */
+/* 亮牌后显示，置于顶部且 pointer-events 仅限自身，绝不遮挡刚亮出的各家手牌 */
+#resultBar {
+  position: fixed;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 92vw;
+  background: rgba(26, 58, 36, 0.94);
+  border: 1px solid rgba(255, 202, 40, 0.55);
+  border-radius: 22px;
+  padding: 7px 16px;
+  color: #fff;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+#resultBarText { font-weight: 600; }
+.btn-sm {
+  padding: 4px 12px;
+  font-size: 13px;
+  border-radius: 16px;
 }

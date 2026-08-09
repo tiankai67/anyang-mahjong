@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安阳麻将 · 游戏规则</title>
+<style>
+  :root{
+    --felt:#0f5132; --felt2:#0a3d26; --gold:#e8c474; --gold2:#f4d79a;
+    --ink:#f3f0e6; --muted:#b9c7bd; --line:#2c6b4a; --card:#103d29;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%,var(--felt),var(--felt2));
+    color:var(--ink); line-height:1.85; padding:24px 16px 60px;
+  }
+  .wrap{max-width:820px; margin:0 auto;}
+  header{text-align:center; margin-bottom:18px;}
+  header h1{color:var(--gold2); font-size:30px; letter-spacing:4px; margin:0 0 6px;}
+  header .sub{color:var(--muted); font-size:14px;}
+  .back{
+    position:fixed; top:16px; left:16px; z-index:9;
+    background:rgba(0,0,0,.35); color:var(--gold2); border:1px solid var(--line);
+    padding:8px 14px; border-radius:8px; cursor:pointer; font-size:14px; text-decoration:none;
+  }
+  .back:hover{background:rgba(0,0,0,.55);}
+  section{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:18px 22px; margin:16px 0; box-shadow:0 6px 20px rgba(0,0,0,.25);
+  }
+  h2{color:var(--gold); font-size:20px; margin:0 0 10px; border-left:4px solid var(--gold); padding-left:10px;}
+  h3{color:var(--gold2); font-size:16px; margin:14px 0 6px;}
+  p,li{color:var(--ink); font-size:15px;}
+  ul{margin:6px 0; padding-left:22px;}
+  li{margin:4px 0;}
+  .tag{display:inline-block; background:rgba(232,196,116,.15); color:var(--gold2);
+    border:1px solid var(--line); border-radius:6px; padding:1px 8px; margin:0 2px; font-size:13px;}
+  .note{background:rgba(0,0,0,.22); border-left:3px solid var(--gold); padding:8px 12px;
+    border-radius:0 8px 8px 0; color:var(--muted); font-size:14px; margin-top:8px;}
+  table{width:100%; border-collapse:collapse; margin-top:8px; font-size:14px;}
+  th,td{border:1px solid var(--line); padding:7px 10px; text-align:left;}
+  th{background:rgba(232,196,116,.12); color:var(--gold2);}
+  .foot{text-align:center; color:var(--muted); font-size:13px; margin-top:24px;}
+</style>
+</head>
+<body>
+<a class="back" href="index.html">← 返回游戏</a>
+<div class="wrap">
+  <header>
+    <h1>安阳麻将</h1>
+    <div class="sub">本规则依据游戏引擎实际逻辑整理</div>
+  </header>
+
+  <section>
+    <h2>一、牌张</h2>
+    <ul>
+      <li>共 <b>137 张</b> = 136 张标准牌 + 1 张花牌（<span class="tag">财神</span>）。</li>
+      <li><b>万 / 条 / 筒</b>：各 1–9，每种 4 张（共 108 张）。</li>
+      <li><b>风牌</b>：东、南、西、北，各 4 张（16 张）。</li>
+      <li><b>箭牌</b>：中、发、白，各 4 张（12 张）。</li>
+      <li><b>花牌</b>：财神 1 张（特殊牌，见第六节）。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>二、座位与定庄</h2>
+    <ul>
+      <li>4 人对局，座位号固定（0 自己/东、1 下家、2 对家、3 上家），<b>不随庄轮换</b>。</li>
+      <li>第一局<b>摇骰子定庄</b>，点数最大者为庄家。</li>
+      <li>庄家胡牌（自摸或点炮）→ <b>连庄</b>；闲家胡牌 → 由庄家的下家坐庄。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>三、发牌与摸打</h2>
+    <ul>
+      <li>庄家发 <b>14 张</b>，闲家各 <b>13 张</b>。</li>
+      <li>轮到谁，先摸一张再从手牌打出一张。</li>
+      <li><b>不可吃牌</b>；只能碰、杠、胡。</li>
+      <li>摸到"财神"立即亮出并<b>补摸一张</b>（不影响手牌结构）。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>四、碰 / 杠</h2>
+    <h3>碰</h3>
+    <p>手中有 2 张相同，别家打出第 3 张 → 碰（亮出 3 张置于碰区）。</p>
+    <h3>杠</h3>
+    <ul>
+      <li><b>明杠</b>：手中有 3 张相同，别家打出第 4 张 → 杠。</li>
+      <li><b>暗杠</b>：自己摸到 4 张相同 → 暗杠（不亮明）。</li>
+      <li><b>补杠</b>：已碰的牌又摸到第 4 张 → 补杠。</li>
+    </ul>
+    <p>杠后从牌墙<b>补摸一张</b>（杠上开花属自摸）。</p>
+  </section>
+
+  <section>
+    <h2>五、听牌（报听 / 顶张）</h2>
+    <ul>
+      <li>轮到你摸牌后，只要<b>打出任意一张仍能听牌</b>，即可点"听"报听。</li>
+      <li><b>顶张机制</b>：所摸到的牌为"顶张"，不能用于碰、杠；报听基于顶张判断。</li>
+      <li>报听后本局<b>只能胡牌</b>（顶张不可碰杠，且不再更换牌型）。</li>
+      <li>系统会提示当前听哪些牌，并区分 <span class="tag">边</span><span class="tag">卡</span><span class="tag">吊</span><span class="tag">普通</span>。</li>
+    </ul>
+    <div class="note">关键：<b>点炮胡牌，只有已报听的玩家才能胡别人的点炮</b>；自摸则无需先报听。</div>
+  </section>
+
+  <section>
+    <h2>六、胡牌牌型</h2>
+    <h3>基本胡</h3>
+    <p>4 个<b>面子</b> + 1 个<b>对子（将）</b>。</p>
+    <ul>
+      <li>面子 = 刻子（3 张相同）或 顺子（同花色 3 张连续，如 3-4-5 条）。</li>
+      <li>字牌（风、箭）只能组成刻子，<b>不能成顺子</b>。</li>
+    </ul>
+    <h3>七对</h3>
+    <p>7 个对子（仅限 <b>0 碰 0 杠</b> 时成立）。</p>
+    <h3>胡牌类型（影响计分）</h3>
+    <table>
+      <tr><th>类型</th><th>说明</th></tr>
+      <tr><td>平胡 normal</td><td>普通胡牌</td></tr>
+      <tr><td>边张 bian</td><td>听 3 或 7 的边张（如 1-2 听 3、7-8 听 7）</td></tr>
+      <tr><td>卡张 ka</td><td>听顺子中间张（如 3-4-5 听 4）</td></tr>
+      <tr><td>吊将 diao</td><td>单钓将牌（胡对子的那一张）</td></tr>
+      <tr><td>七对 qixingdui</td><td>七个对子</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>七、计分（嘴子制，1 嘴子 = 10 分）</h2>
+    <ul>
+      <li><b>基础分</b>：庄家 5 嘴（50 分），闲家 1 嘴（10 分）。</li>
+      <li><b>自摸</b>：每家按<b>自身基础分 ×2</b> 付给胡牌者。</li>
+      <li><b>点炮</b>：点炮者按<b>胡牌者基础分</b> 付给胡牌者。</li>
+      <li><b>财神</b>：每张财神，胡牌者额外得 1 嘴（自摸则每家给 1 嘴；点炮则点炮者给 1 嘴）。</li>
+      <li><b>边 / 卡 / 吊</b>：每种额外 1 嘴（分摊同上）。</li>
+      <li><b>杠分</b>：明杠 1 嘴（被杠者付）；暗杠 2 嘴（每家付）。</li>
+    </ul>
+    <div class="note">示例：闲家自摸，其余三家为"庄 + 闲 + 闲" → 赢家得 100 + 20 + 20 = 140 分。</div>
+  </section>
+
+  <section>
+    <h2>八、流局（荒庄）</h2>
+    <ul>
+      <li>牌墙摸完仍无人胡牌 → <b>荒庄</b>，本局结束。</li>
+      <li>荒庄<b>不结算杠分</b>，且<b>庄家连庄</b>。</li>
+    </ul>
+  </section>
+
+  <div class="foot">安阳麻将 · 规则页 · 与游戏引擎保持一致</div>
+</div>
+</body>
+</html>

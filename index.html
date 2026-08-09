@@ -55,6 +55,7 @@
         · 边、卡、吊额外加zuizi<br>
         · 点胡只能胡报听过的玩家
       </div>
+      <button class="btn btn-primary" style="margin-top:12px; width:100%;" onclick="location.href='rules.html'">📖 查看完整游戏规则</button>
     </div>
   </div>
 </div>
@@ -70,6 +71,18 @@
     </div>
     <div class="round-info">
       <span id="displayPhase">等待中</span>
+    </div>
+    <div class="audio-toggles">
+      <button id="sfxToggle" class="btn-icon" onclick="toggleSfx()" title="音效开关">🔊</button>
+      <button id="voiceToggle" class="btn-icon" onclick="toggleVoice()" title="报牌语音开关">🗣</button>
+      <button id="bgmToggle" class="btn-icon" onclick="toggleBgm()" title="背景音乐开关">🎵</button>
+      <span class="bgm-picker" id="bgmPicker" title="切换背景音乐">
+        <button class="btn-icon" onclick="cycleBgm(-1)" title="上一首">⏮</button>
+        <span id="bgmName" class="bgm-name" title="点击切换开关" onclick="toggleBgm()">曲目1</span>
+        <button class="btn-icon" onclick="cycleBgm(1)" title="下一首">⏭</button>
+        <button id="bgmModeBtn" class="btn-icon" onclick="toggleBgmMode()" title="播放模式：顺序循环（三首播完再循环）">🔁</button>
+      </span>
+      <a id="rulesToggle" class="btn-icon" href="rules.html" title="游戏规则" style="text-decoration:none; display:inline-flex; align-items:center;">📖</a>
     </div>
     <button class="btn btn-leave" onclick="leaveRoom()">离开</button>
   </div>
@@ -87,6 +100,7 @@
       <!-- 对家（上） -->
       <div class="player-area player-top" id="playerTop">
         <div class="player-info" id="infoTop"></div>
+        <div class="opp-hand" id="handTop"></div>
         <div class="meld-area" id="meldTop"></div>
         <div class="discard-area" id="discardTop"></div>
       </div>
@@ -94,6 +108,7 @@
       <!-- 左家 -->
       <div class="player-area player-left" id="playerLeft">
         <div class="player-info" id="infoLeft"></div>
+        <div class="opp-hand" id="handLeft"></div>
         <div class="meld-area" id="meldLeft"></div>
         <div class="discard-area" id="discardLeft"></div>
       </div>
@@ -101,6 +116,7 @@
       <!-- 右家 -->
       <div class="player-area player-right" id="playerRight">
         <div class="player-info" id="infoRight"></div>
+        <div class="opp-hand" id="handRight"></div>
         <div class="meld-area" id="meldRight"></div>
         <div class="discard-area" id="discardRight"></div>
       </div>
@@ -119,6 +135,12 @@
 
   <!-- 常驻“再来一局”按钮（一局结束后显示） -->
   <button class="btn btn-primary float-newround" id="newRoundFloat" onclick="startNewRound()" style="display:none;">再来一局</button>
+
+  <!-- 一局结束“亮牌”后的非阻塞结算条：不遮挡桌面，可点“查看结算”看明细 -->
+  <div id="resultBar" style="display:none;">
+    <span id="resultBarText"></span>
+    <button class="btn btn-sm" onclick="openResultModal()">查看结算</button>
+  </div>
 
   <!-- 准备区域 -->
   <div class="ready-area" id="readyArea" style="display:none;">
@@ -208,5 +230,14 @@
 
 <!-- 悬停牌名提示框 -->
 <div id="tileTooltip" class="tile-tooltip"></div>
+<!-- 掷骰子定庄动画覆盖层 -->
+<div id="diceOverlay" class="dice-overlay">
+  <div class="dice-panel">
+    <div class="dice-title">🎲 掷骰子定庄</div>
+    <div id="dicePlayers" class="dice-players"></div>
+    <div id="diceResult" class="dice-result"></div>
+    <button id="diceRollBtn" class="btn-dice-roll" onclick="rollDiceNow()">🎲 开始掷骰</button>
+  </div>
+</div>
 </body>
 </html>
