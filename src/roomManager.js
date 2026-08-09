@@ -682,6 +682,7 @@ class GameRoom {
       phase: this.phase,
       currentPlayer: this.currentPlayer,
       dealer: this.dealer,
+      diceResults: this.diceResults,
       remainingTiles: this.wallTiles.length,
       discardTiles: this.discardTiles,
       lastDiscard: this.lastDiscard,

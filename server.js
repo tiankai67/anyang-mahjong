@@ -283,7 +283,8 @@ io.on('connection', (socket) => {
         dianPaoPlayer: room.lastDiscardPlayer,
         huDetail: room.huDetail,
         netScores: result.netScores,
-        players: room.players.map(p => p ? { name: p.name, seat: p.seat, score: p.score, totalScore: p.totalScore } : null)
+        players: room.players.map(p => p ? { name: p.name, seat: p.seat, score: p.score, totalScore: p.totalScore } : null),
+        revealObj: _buildReveal(room, seat, room.lastDiscard)
       });
       _broadcastGameState(info.roomId);
     } else {
@@ -304,7 +305,8 @@ io.on('connection', (socket) => {
         winType: 'zimo',
         huDetail: room.huDetail,
         netScores: result.netScores,
-        players: room.players.map(p => p ? { name: p.name, seat: p.seat, score: p.score, totalScore: p.totalScore } : null)
+        players: room.players.map(p => p ? { name: p.name, seat: p.seat, score: p.score, totalScore: p.totalScore } : null),
+        revealObj: _buildReveal(room, seat, null)
       });
       _broadcastGameState(info.roomId);
     } else {
@@ -364,6 +366,13 @@ io.on('connection', (socket) => {
     _startGame(info.roomId);
   });
 
+  // 客户端确认掷骰定庄，服务端正式发牌
+  socket.on('confirmDice', () => {
+    const info = roomManager.getRoomByPlayer(socket.id);
+    if (!info) return;
+    _onConfirmDice(info.roomId, socket, info.seat);
+  });
+
   // 离开房间
   socket.on('leaveRoom', () => {
     _handleDisconnect(socket);
@@ -393,28 +402,58 @@ function _startGame(roomId) {
   const room = roomManager.getRoom(roomId);
   if (!room) return;
   room.startNewGame();
-  room.dealTiles();
 
-  io.to(roomId).emit('gameStart', {
-    dealer: room.dealer,
-    diceResults: room.diceResults,
-    roundNumber: room.roundNumber
-  });
+  if (room.diceResults && room.diceResults.length) {
+    // 第一盘：已掷骰定庄，但“先掷骰 → 再发牌”——
+    // 发牌延迟到客户端点击“开始掷骰”(confirmDice) 之后才真正进行
+    room.phase = PHASE.ROLLING;
+    io.to(roomId).emit('gameStart', {
+      dealer: room.dealer,
+      diceResults: room.diceResults,
+      roundNumber: room.roundNumber
+    });
+  } else {
+    // 第2盘起：庄家顺延，无需掷骰，直接发牌并开始
+    room.dealTiles();
+    io.to(roomId).emit('gameStart', {
+      dealer: room.dealer,
+      diceResults: [],
+      roundNumber: room.roundNumber
+    });
+    _broadcastGameState(roomId);
+    _notifyDealer(roomId);
+  }
+}
 
-  _broadcastGameState(roomId);
+// 客户端点击“开始掷骰”确认后，服务端才真正发牌并开始对局
+function _onConfirmDice(roomId, socket, seat) {
+  const room = roomManager.getRoom(roomId);
+  if (!room) return;
+  if (room.phase === PHASE.ROLLING) {
+    // 首盘：正式发牌并通知庄家出牌
+    room.dealTiles();
+    _broadcastGameState(roomId);
+    _notifyDealer(roomId);
+  } else if (room.phase === PHASE.PLAYING && socket) {
+    // 已发牌（迟到玩家在掷骰后才加入）：仅给该玩家补发当前完整状态，避免空桌面
+    io.to(socket.id).emit('gameState', room.getGameState(seat));
+  }
+}
 
-  // 通知庄家出牌
+// 通知庄家出牌（首盘发牌后 / 第2盘直接发牌后共用）
+function _notifyDealer(roomId) {
+  const room = roomManager.getRoom(roomId);
+  if (!room) return;
   const dealer = room.players[room.dealer];
-  if (dealer) {
-    if (dealer.isAI) {
-      _scheduleAIPlay(roomId, room.dealer);
-    } else {
-      io.to(dealer.id).emit('yourTurn', { mustDiscard: true });
-      // 检查自摸/暗杠等
-      const actions = room.getSelfActions(room.dealer);
-      if (actions.length > 0) {
-        io.to(dealer.id).emit('selfActions', { actions });
-      }
+  if (!dealer) return;
+  if (dealer.isAI) {
+    _scheduleAIPlay(roomId, room.dealer);
+  } else {
+    io.to(dealer.id).emit('yourTurn', { mustDiscard: true });
+    // 检查自摸/暗杠等
+    const actions = room.getSelfActions(room.dealer);
+    if (actions.length > 0) {
+      io.to(dealer.id).emit('selfActions', { actions });
     }
   }
 }
@@ -433,7 +472,8 @@ function _nextTurn(roomId) {
       winner: -1,
       winType: 'draw',
       netScores: {},
-      players: room.players.map(p => p ? { name: p.name, seat: p.seat, score: 0, totalScore: p.totalScore } : null)
+      players: room.players.map(p => p ? { name: p.name, seat: p.seat, score: 0, totalScore: p.totalScore } : null),
+      revealObj: _buildReveal(room, -1, null)
     });
     _broadcastGameState(roomId);
     return;
@@ -465,6 +505,39 @@ function _broadcastGameState(roomId) {
       io.to(room.players[i].id).emit('gameState', room.getGameState(i));
     }
   }
+}
+
+// 构建“亮牌”数据：一局结束后把所有玩家的手牌/碰杠/花牌发给客户端（含胡牌那张）
+function _buildReveal(room, winnerSeat, extraTile) {
+  const map = {};
+  for (let i = 0; i < 4; i++) {
+    const p = room.players[i];
+    if (!p) continue;
+    const hand = p.handTiles.map(t => ({
+      type: t.type, num: t.num, id: t.id, name: t.name, isHua: !!t.isHua
+    }));
+    let winTileId = null;
+    if (i === winnerSeat) {
+      if (extraTile) {
+        // 点炮：胡的那张牌在弃牌堆，补进手牌展示
+        hand.push({ type: extraTile.type, num: extraTile.num, id: extraTile.id, name: extraTile.name, isHua: false });
+        winTileId = extraTile.id;
+      } else if (p.lastDrawTile) {
+        // 自摸：胡的那张已是最新摸到的牌
+        winTileId = p.lastDrawTile.id;
+      }
+    }
+    map[i] = {
+      seat: i,
+      isWinner: (i === winnerSeat),
+      winTileId,
+      handTiles: hand,
+      pengArea: p.pengArea,
+      gangArea: p.gangArea,
+      huaTiles: p.huaTiles.map(t => ({ type: t.type, num: t.num, id: t.id, name: t.name }))
+    };
+  }
+  return map;
 }
 
 // 处理某张牌打出后其他玩家的响应（人类+AI）
@@ -573,7 +646,8 @@ function _executeAIAction(roomId, seat, action) {
           winType: 'zimo',
           huDetail: room.huDetail,
           netScores: result.netScores,
-          players: room.players.map(p => p ? { name: p.name, seat: p.seat, score: p.score, totalScore: p.totalScore } : null)
+          players: room.players.map(p => p ? { name: p.name, seat: p.seat, score: p.score, totalScore: p.totalScore } : null),
+          revealObj: _buildReveal(room, seat, null)
         });
         _broadcastGameState(roomId);
       }
@@ -589,7 +663,8 @@ function _executeAIAction(roomId, seat, action) {
           dianPaoPlayer: room.lastDiscardPlayer,
           huDetail: room.huDetail,
           netScores: result.netScores,
-          players: room.players.map(p => p ? { name: p.name, seat: p.seat, score: p.score, totalScore: p.totalScore } : null)
+          players: room.players.map(p => p ? { name: p.name, seat: p.seat, score: p.score, totalScore: p.totalScore } : null),
+          revealObj: _buildReveal(room, seat, room.lastDiscard)
         });
         _broadcastGameState(roomId);
       }
