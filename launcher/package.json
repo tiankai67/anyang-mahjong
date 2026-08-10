@@ -5,7 +5,7 @@
   "main": "main.js",
   "private": true,
   "devDependencies": {
-    "electron": "^43.3.0"
+    "electron": "43.3.0"
   },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2"

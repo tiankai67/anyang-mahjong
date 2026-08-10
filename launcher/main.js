@@ -14,6 +14,8 @@ const URL = `http://localhost:${PORT}`;
 const NODE_CANDIDATES = [
   process.env.NODE_BIN,
   'C:\\Users\\tiank\\.workbuddy\\binaries\\node\\versions\\22.22.2\\node.exe',
+  'C:\\Users\\Administrator\\.workbuddy\\binaries\\node\\versions\\22.22.2\\node.exe',
+  'C:\\Users\\Administrator\\.workbuddy\\binaries\\node\\versions\\24.14.1\\node.exe',
   'node'
 ].filter(Boolean);
 
